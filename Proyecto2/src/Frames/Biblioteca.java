@@ -30,7 +30,7 @@ DefaultListModel<String> model = new DefaultListModel<>();
  File archivo;
  boolean categoriaResponse;
  byte[] bytesImg;
-Categorias cate = new Categorias();
+Categorias categorias = new Categorias();
 ImagesFunctions imagen = new ImagesFunctions();
  
  
@@ -153,17 +153,16 @@ ImagesFunctions imagen = new ImagesFunctions();
 
     private void addCategoryMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addCategoryMouseClicked
         //Agrega una categoria
-        String c = JOptionPane.showInputDialog(null,"Ingrese el nombre de la categoria");
-        cate.addInicio(c);
-        model.addElement(c);
-        listCatgories.setModel(model);
+        String c = JOptionPane.showInputDialog(null, "Ingrese el nombre de la categoria");
+        categorias.add(c);
+        listCatgories.setModel(categorias.toDefaultListModel());
     }//GEN-LAST:event_addCategoryMouseClicked
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
         // Eliminar categoria
-         String opcionSeleccionada = (String) JOptionPane.showInputDialog(null, "Seleccione una opción:", "Lista de opciones", JOptionPane.QUESTION_MESSAGE, null, model.toArray(), model.getElementAt(0));
-        model.remove(model.indexOf(opcionSeleccionada));
-        listCatgories.setModel(model);
+     String opcionSeleccionada = (String) JOptionPane.showInputDialog(null, "Seleccione una opción:", "Lista de opciones", JOptionPane.QUESTION_MESSAGE, null, categorias.toArray(), categorias.get(0));
+        categorias.remove(categorias.indexOf(opcionSeleccionada));
+        listCatgories.setModel(categorias.toDefaultListModel());
         JOptionPane.showMessageDialog(null, "Se ha eliminado la opcion: " + opcionSeleccionada);
     }//GEN-LAST:event_jButton2MouseClicked
 

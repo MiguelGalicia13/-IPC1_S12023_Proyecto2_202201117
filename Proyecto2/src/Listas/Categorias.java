@@ -5,82 +5,64 @@
 package Listas;
 
 import java.io.Serializable;
+
+import java.util.*;
+import javax.swing.*;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author ricar
- */
-public class Categorias implements Serializable{
-    public NodoDoble inicio, fin;
-    public int contador;
-    public Categorias(){
-        inicio=fin=null;
+public class Categorias<T> implements Serializable {
+
+    private ArrayList<T> elementos;
+
+    public Categorias() {
+        elementos = new ArrayList<>();
     }
-    // mira si esta vacia
-    public boolean isVacio(){
-        return inicio==null;
+
+    public int size() {
+        return elementos.size();
     }
-    //Agrega un nodo al final de la lista
-    public void addFinal(String dato){
-        if (!isVacio()) {
-            fin=new NodoDoble(dato, null, fin);
-            fin.anterior.siguiente=fin;
-        }else{
-            inicio=fin=new NodoDoble(dato);
+
+    public boolean isEmpty() {
+        return elementos.isEmpty();
+    }
+
+    public boolean contains(T elemento) {
+        return elementos.contains(elemento);
+    }
+
+    public T get(int indice) {
+        return elementos.get(indice);
+    }
+
+    public void add(T elemento) {
+        elementos.add(elemento);
+    }
+
+    public void remove(int indice) {
+        elementos.remove(indice);
+    }
+
+    public void clear() {
+        elementos.clear();
+    }
+
+    public int indexOf(T elemento) {
+        return elementos.indexOf(elemento);
+    }
+
+    public String[] toArray() {
+        String[] array = new String[elementos.size()];
+        for (int i = 0; i < elementos.size(); i++) {
+            array[i] = elementos.get(i).toString();
         }
+        return array;
     }
-    //Agrega un nodo al incio de la Lista
-     public void addInicio(String dato){
-        if (!isVacio()) {
-            inicio=new NodoDoble(dato, inicio, null);
-            inicio.siguiente.anterior=inicio;
-            JOptionPane.showMessageDialog(null, "la categoria a sido guardada");
-            contador++;
-        }else{
-            inicio=fin=new NodoDoble(dato);
-            contador++;
-            JOptionPane.showMessageDialog(null, "la categoria a sido guardada");
+
+    public DefaultListModel<T> toDefaultListModel() {
+        DefaultListModel<T> model = new DefaultListModel<>();
+        for (T elemento : elementos) {
+            model.addElement(elemento);
         }
+        return model;
     }
-     public void buscar(String e, String nombreimagen){
-        NodoDoble actual;
-        actual = inicio;
-        while (actual!=null) {
-            if (actual.datos.equals(e)) {;
-                actual.imagenes.nuevoNodo(nombreimagen);
-            }else{
-                JOptionPane.showMessageDialog(null, "La categoria no existe");
-            }
-            actual=actual.siguiente;
-        }
-    }
-     public boolean buscarnodoregresivo(String e){
-        NodoDoble actual;
-        actual = inicio;
-        boolean encontrado=false;
-        while (actual!=null) {
-            if (actual.datos.equals(e)) {
-                encontrado=true;
-            }else{
-                encontrado=false;
-            }
-            actual=actual.siguiente;
-            if (encontrado==true) {
-                break;
-            }
-        }
-        return encontrado;
-    }
-     public String[] mostrarDatos(){
-        String datos[] = new String[contador];
-        if (!isVacio()) {
-            NodoDoble aux = inicio;
-            for (int i = 0; i < contador; i++) {
-                datos[i]= (String) aux.datos;
-                aux = aux.siguiente;
-            }
-        }
-        return datos;   
-}
 }

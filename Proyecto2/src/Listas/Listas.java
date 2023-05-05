@@ -45,9 +45,6 @@ public class Listas implements Serializable {
             data=(String) aux.verDato();
         }
     }
-    public void llamarcategoria(String e){
-        getCabeza().categoria.addInicio(e);
-    }
     public boolean state(){
      return getCabeza()==null;
     }

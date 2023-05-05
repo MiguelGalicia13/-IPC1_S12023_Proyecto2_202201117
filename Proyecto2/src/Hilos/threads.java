@@ -4,7 +4,6 @@
  */
 package Hilos;
 
-import Frames.Editor;
 import Imagenes.*;
 import Listas.Listas;
 
@@ -13,9 +12,9 @@ import Listas.Listas;
  * @author ricar
  */
 public class threads extends Thread{
-    Listas usuario = new Listas();
+   /* Listas usuario = new Listas();
     ImagesController imagenes1 = new ImagesController();
     ImagesFunctions imagenes2 = new ImagesFunctions();
-    public Editor convetir;
+    public Editor convetir;*/
     
 }
