@@ -6,30 +6,26 @@ package Frames;
 
 import Hilos.threads;
 import Imagenes.*;
+
+import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Stack;
-import javax.swing.JFileChooser;
-import javax.swing.Timer;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  *
  * @author ricar
  */
 public class Editor extends javax.swing.JFrame {
-    threads paralelo = new threads();
-    String temporal[], colatemporal[], imagenestemporales[];
-    JFileChooser archivoSelected = new JFileChooser();
-    byte[] bytesImg = new byte[1024*100];
-    ImagesFunctions imagen = new ImagesFunctions();
-    ImagesController imagenes = new ImagesController();
-    private Timer t;
-    private ActionListener ac;
-    private int x=0;
-    LinkedList datos;
-    Stack datospila;
-    String consola;
-
+    
+JFileChooser archivoSelected = new JFileChooser();
+ File archivo;
     /**
      * Creates new form Editor
      */
@@ -49,37 +45,42 @@ public class Editor extends javax.swing.JFrame {
         btn_selecImg = new javax.swing.JButton();
         imgSelected = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
-        jRadioButton4 = new javax.swing.JRadioButton();
-        jRadioButton5 = new javax.swing.JRadioButton();
+        JPGaBMP = new javax.swing.JRadioButton();
+        copyJPG = new javax.swing.JRadioButton();
+        sepia = new javax.swing.JRadioButton();
+        rotate90 = new javax.swing.JRadioButton();
+        ByW = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         btn_selecImg.setText("Seleccionar Imagen");
+        btn_selecImg.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_selecImgMouseClicked(evt);
+            }
+        });
 
         imgSelected.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         imgSelected.setText("Imagen");
         imgSelected.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        jRadioButton1.setText("JPG a BMP y viceversa");
+        JPGaBMP.setText("JPG a BMP y viceversa");
 
-        jRadioButton2.setText("copia JPG");
+        copyJPG.setText("copia JPG");
 
-        jRadioButton3.setText("Sepia");
+        sepia.setText("Sepia");
 
-        jRadioButton4.setText("Modificar Imagen");
-        jRadioButton4.addActionListener(new java.awt.event.ActionListener() {
+        rotate90.setText("Modificar Imagen");
+        rotate90.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton4ActionPerformed(evt);
+                rotate90ActionPerformed(evt);
             }
         });
 
-        jRadioButton5.setText("Blanco y negro");
-        jRadioButton5.addActionListener(new java.awt.event.ActionListener() {
+        ByW.setText("Blanco y negro");
+        ByW.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jRadioButton5ActionPerformed(evt);
+                ByWActionPerformed(evt);
             }
         });
 
@@ -90,26 +91,26 @@ public class Editor extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(52, 52, 52)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jRadioButton5)
-                    .addComponent(jRadioButton4)
-                    .addComponent(jRadioButton2)
-                    .addComponent(jRadioButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jRadioButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(ByW)
+                    .addComponent(rotate90)
+                    .addComponent(copyJPG)
+                    .addComponent(JPGaBMP, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(sepia, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(124, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(18, 18, 18)
-                .addComponent(jRadioButton1)
+                .addComponent(JPGaBMP)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jRadioButton2)
+                .addComponent(copyJPG)
                 .addGap(12, 12, 12)
-                .addComponent(jRadioButton3)
+                .addComponent(sepia)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jRadioButton4)
+                .addComponent(rotate90)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jRadioButton5)
+                .addComponent(ByW)
                 .addContainerGap(46, Short.MAX_VALUE))
         );
 
@@ -117,43 +118,63 @@ public class Editor extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(37, 37, 37)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 197, Short.MAX_VALUE)
+                .addComponent(imgSelected, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(61, 61, 61))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btn_selecImg, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(95, 95, 95))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(47, 47, 47)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 219, Short.MAX_VALUE)
-                .addComponent(imgSelected, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29))
+                .addGap(142, 142, 142))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addGap(38, 38, 38)
                 .addComponent(btn_selecImg, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(49, 49, 49)
-                        .addComponent(imgSelected, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 102, Short.MAX_VALUE)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(154, 154, 154))))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(imgSelected, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(149, 149, 149))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jRadioButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton4ActionPerformed
+    private void rotate90ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rotate90ActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton4ActionPerformed
+    }//GEN-LAST:event_rotate90ActionPerformed
 
-    private void jRadioButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton5ActionPerformed
+    private void ByWActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ByWActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jRadioButton5ActionPerformed
+    }//GEN-LAST:event_ByWActionPerformed
+
+    private void btn_selecImgMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_selecImgMouseClicked
+        // TODO add your handling code here:
+        // Crear un filtro para mostrar solo archivos JPG
+        archivoSelected.setFileFilter(new FileNameExtensionFilter("Imagenes", "jpg"));
+        int respuesta = archivoSelected.showOpenDialog(null);
+        // Verifica que el archivo haya sido seleccionado
+        if (respuesta == JFileChooser.APPROVE_OPTION) {
+            archivo = archivoSelected.getSelectedFile();
+            // Verifica que el archivo sea una imagen JPG
+            if (archivo.getName().toLowerCase().endsWith(".jpg")) {
+                ImageIcon imagen = new ImageIcon(archivo.getAbsolutePath());
+                Image img = imagen.getImage();
+                //Redimensiona la iamgen para el label
+                img = img.getScaledInstance(imgSelected.getWidth(), imgSelected.getHeight(), Image.SCALE_SMOOTH);
+                imagen = new ImageIcon(img);
+                imgSelected.setIcon(imagen);
+            } else {
+                JOptionPane.showMessageDialog(null, "Solo se permiten imágenes en formato JPG");
+            }
+        }
+        }
+        
+    //GEN-LAST:event_btn_selecImgMouseClicked
 
     /**
      * @param args the command line arguments
@@ -191,13 +212,13 @@ public class Editor extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JRadioButton ByW;
+    private javax.swing.JRadioButton JPGaBMP;
     private javax.swing.JButton btn_selecImg;
+    private javax.swing.JRadioButton copyJPG;
     private javax.swing.JLabel imgSelected;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
-    private javax.swing.JRadioButton jRadioButton4;
-    private javax.swing.JRadioButton jRadioButton5;
+    private javax.swing.JRadioButton rotate90;
+    private javax.swing.JRadioButton sepia;
     // End of variables declaration//GEN-END:variables
 }
